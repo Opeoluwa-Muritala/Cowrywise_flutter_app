@@ -1,96 +1,174 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../models/job.dart';
+import '../services/job_service.dart';
+import 'company_profile_screen.dart';
 
-class JobDetailsScreen extends StatelessWidget {
+class JobDetailsScreen extends StatefulWidget {
   final Job job;
   const JobDetailsScreen({super.key, required this.job});
 
   @override
+  State<JobDetailsScreen> createState() => _JobDetailsScreenState();
+}
+
+class _JobDetailsScreenState extends State<JobDetailsScreen> {
+  late Job _currentJob;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentJob = widget.job;
+    _fetchFullDetails();
+  }
+
+  Future<void> _fetchFullDetails() async {
+    // If it's a mock job or already has description, don't fetch from API
+    if (_currentJob.id.startsWith('mock_') || _currentJob.description != 'No description available.') {
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final details = await JobService.getJobDetails(_currentJob.id);
+      if (mounted) {
+        setState(() {
+          _currentJob = details;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('SkillBoard', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+        title: const Text('SkillBoard', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(icon: const Icon(Icons.share_outlined), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.bookmark_border), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.share_outlined, color: Colors.black), onPressed: () {}),
+          IconButton(
+            icon: Icon(
+              _currentJob.isSaved ? Icons.bookmark : Icons.bookmark_border,
+              color: _currentJob.isSaved ? AppColors.primary : Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                JobService.toggleSaveJob(_currentJob.id);
+              });
+            },
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(16),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CompanyProfileScreen()),
+                      );
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: _currentJob.logo.isNotEmpty && _currentJob.logo.startsWith('http')
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(_currentJob.logo, fit: BoxFit.cover),
+                            )
+                          : Center(
+                              child: Text(
+                                _currentJob.logo.isNotEmpty ? _currentJob.logo : _currentJob.company[0],
+                                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(_currentJob.title, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1.1)),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CompanyProfileScreen()),
+                      );
+                    },
+                    child: Text('${_currentJob.company} • ${_currentJob.location}',
+                        style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500)),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      _buildInfoBadge(_currentJob.salary),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(child: _buildDetailItem('EXPERIENCE', _currentJob.experience)),
+                      Expanded(child: _buildDetailItem('JOB TYPE', _currentJob.type)),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  const Text('Job Description', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  Text(
+                    _currentJob.description,
+                    style: const TextStyle(color: AppColors.textSecondary, height: 1.6),
+                  ),
+                  const SizedBox(height: 32),
+                  if (_currentJob.tags.isNotEmpty) ...[
+                    const Text('Core Skills', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _currentJob.tags.map((tag) => _buildSkillChip(tag, tag == _currentJob.tags.first)).toList(),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                  if (_currentJob.requirements.isNotEmpty) ...[
+                    const Text('Requirements', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    ..._currentJob.requirements.map((req) => _buildRequirementItem(req)).toList(),
+                    const SizedBox(height: 100),
+                  ],
+                ],
               ),
-              child: Center(child: Text(job.logo, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold))),
             ),
-            const SizedBox(height: 24),
-            Text(job.title, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1.1)),
-            const SizedBox(height: 8),
-            Text('${job.company} • ${job.location}', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _buildInfoBadge('\$1.2M - \$1.8M / worth'),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(child: _buildDetailItem('EXPERIENCE', '5+ Years')),
-                Expanded(child: _buildDetailItem('JOB TYPE', job.type)),
-              ],
-            ),
-            const SizedBox(height: 32),
-            const Text('Job Description', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            const Text(
-              'We are looking for a visionary Senior Product Designer to join our core growth team. You will lead the design evolution of our digital wealth management platform, focusing on making complex financial tools feel intuitive and empowering for millions of users across Africa.',
-              style: TextStyle(color: AppColors.textSecondary, height: 1.6),
-            ),
-            const SizedBox(height: 32),
-            const Text('Core Skills', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildSkillChip('Figma Architecture', true),
-                _buildSkillChip('Visual Storytelling', false),
-                _buildSkillChip('User Research', false),
-                _buildSkillChip('Prototyping', false),
-                _buildSkillChip('Design Systems', false),
-              ],
-            ),
-            const SizedBox(height: 32),
-            const Text('Requirements', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            _buildRequirementItem('Proven experience designing high-scale fintech or transactional mobile applications.'),
-            _buildRequirementItem('Expertise in building and maintaining cross-platform design systems.'),
-            _buildRequirementItem('Ability to translate business requirements into elegant, user-centric flows.'),
-            _buildRequirementItem('Strong portfolio demonstrating high-end visual execution and structural thinking.'),
-            const SizedBox(height: 100),
-          ],
-        ),
-      ),
       bottomSheet: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))],
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: const Offset(0, -2))],
         ),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Application Submitted Successfully!')),
+            );
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,

@@ -1,4 +1,5 @@
 class Job {
+  final String id;
   final String title;
   final String company;
   final String location;
@@ -7,8 +8,14 @@ class Job {
   final String timeAgo;
   final String logo;
   final List<String> tags;
+  final bool isRemote;
+  final String description;
+  final List<String> requirements;
+  final String experience;
+  bool isSaved;
 
   Job({
+    required this.id,
     required this.title,
     required this.company,
     required this.location,
@@ -17,38 +24,45 @@ class Job {
     required this.timeAgo,
     required this.logo,
     required this.tags,
+    this.isRemote = false,
+    this.description = 'No description available.',
+    this.requirements = const [],
+    this.experience = 'N/A',
+    this.isSaved = false,
   });
-}
 
-final List<Job> recentJobs = [
-  Job(
-    title: 'Lead Android Architect',
-    company: 'Google Cloud',
-    location: 'Remote',
-    salary: '\$140k - \$210k',
-    type: 'Full-time',
-    timeAgo: '2d ago',
-    logo: 'G',
-    tags: ['KOTLIN', 'JETPACK COMPOSE'],
-  ),
-  Job(
-    title: 'Senior UX Engineer',
-    company: 'Airbnb',
-    location: 'San Francisco',
-    salary: '\$120k - \$180k',
-    type: 'Contract',
-    timeAgo: '5h ago',
-    logo: 'A',
-    tags: ['DESIGN SYSTEMS'],
-  ),
-  Job(
-    title: 'Product Designer',
-    company: 'Spotify',
-    location: 'New York',
-    salary: '\$130k - \$190k',
-    type: 'Full-time',
-    timeAgo: '1d ago',
-    logo: 'S',
-    tags: ['FIGMA', 'UI/UX'],
-  ),
-];
+  factory Job.fromBingJson(Map<String, dynamic> json) {
+    return Job(
+      id: json['id'] ?? '',
+      title: json['title'] ?? 'No Title',
+      company: json['company'] ?? 'Unknown Company',
+      location: json['location'] ?? 'N/A',
+      salary: 'N/A', // Bing search doesn't return salary usually in list
+      type: json['employmentType'] ?? 'Full-time',
+      timeAgo: json['postedTimeAgo'] ?? 'Recently',
+      logo: json['image'] ?? '',
+      tags: [
+        json['employmentType'] ?? 'Full-time',
+        'REMOTE',
+      ],
+      isRemote: true,
+    );
+  }
+
+  factory Job.fromDetailsJson(Map<String, dynamic> json) {
+    return Job(
+      id: json['id'] ?? '',
+      title: json['title'] ?? 'No Title',
+      company: json['companyName'] ?? 'Unknown Company',
+      location: json['location'] ?? 'N/A',
+      salary: 'N/A',
+      type: json['employmentType'] ?? 'Full-time',
+      timeAgo: json['postedTimeAgo'] ?? 'Recently',
+      logo: '', 
+      tags: [json['employmentType'] ?? 'Full-time'],
+      description: json['description'] ?? 'No description available.',
+      experience: 'N/A',
+      requirements: [],
+    );
+  }
+}
