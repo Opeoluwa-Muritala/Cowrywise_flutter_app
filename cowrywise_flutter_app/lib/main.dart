@@ -4,16 +4,16 @@ import 'screens/onboarding_screen.dart';
 import 'screens/main_screen.dart';
 
 void main() {
-  runApp(const SkillBoardApp());
+  runApp(const OpportunityApp());
 }
 
-class SkillBoardApp extends StatelessWidget {
-  const SkillBoardApp({super.key});
+class OpportunityApp extends StatelessWidget {
+  const OpportunityApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SkillBoard',
+      title: 'Opportunity',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       home: const OnboardingScreen(),

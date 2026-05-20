@@ -1,228 +1,282 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 
-class CompanyProfileScreen extends StatelessWidget {
+class CompanyProfileScreen extends StatefulWidget {
   const CompanyProfileScreen({super.key});
+
+  @override
+  State<CompanyProfileScreen> createState() => _CompanyProfileScreenState();
+}
+
+class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
+  bool _isFollowing = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text('Opportunity', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            actions: [
-              IconButton(icon: const Icon(Icons.person_outline, color: Colors.black), onPressed: () {}),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                'https://placeholder.com/company_bg', // Placeholder
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey.shade200),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Transform.translate(
-              offset: const Offset(0, -30),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                ),
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20)],
-                        ),
-                        child: const Icon(Icons.music_note, size: 40, color: Color(0xFF1DB954)),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Center(
-                      child: Column(
-                        children: [
-                          Text('Spotify', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          Text('Music & Entertainment', style: TextStyle(color: AppColors.textSecondary)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildCompanyStat(Icons.people_outline, '5,001 - 10,000 Employees'),
-                        const SizedBox(width: 16),
-                        _buildCompanyStat(Icons.location_on_outlined, 'Stockholm, SE'),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text('Follow Company'),
-                    ),
-                    const SizedBox(height: 32),
-                    const Text('About the Company', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Our mission is to unlock the potential of human creativity—by giving a million creative artists the opportunity to live off their art and billions of fans the opportunity to enjoy and be inspired by it.\n\nSpotify is a digital music, podcast, and video service that gives you access to millions of songs and other content from creators all over the world.",
-                      style: TextStyle(color: AppColors.textSecondary, height: 1.5),
-                    ),
-                    const SizedBox(height: 32),
-                    const Text('Culture & Life', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    _buildCultureImage(),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Open Android Roles', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(8)),
-                          child: const Text('3 POSITIONS', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildRoleItem('Senior Android Engineer, Player Experience', 'Remote (Stockholm) • Full-time', ['KOTLIN', 'COMPOSE', 'DAGGER HILT']),
-                    _buildRoleItem('Android SDK Specialist', 'Stockholm • Hybrid', ['SDK DESIGN', 'JAVA/KOTLIN', 'PERFORMANCE']),
-                    const SizedBox(height: 32),
-                    const Text('QUICK INSIGHTS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1)),
-                    const SizedBox(height: 16),
-                    _buildInsightTile(Icons.trending_up, 'GROWTH RATE', '12% YOY'),
-                    _buildInsightTile(Icons.work_outline, 'WORK MODE', 'Work From Anywhere'),
-                    _buildInsightTile(Icons.star_outline, 'GLASSDOOR', '4.2 / 5.0'),
-                  ],
-                ),
-              ),
-            ),
-          ),
+      backgroundColor: AppColors.background,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 3,
+        onTap: (index) {
+          if (index == 0) Navigator.pop(context);
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), activeIcon: Icon(Icons.explore), label: 'Discover'),
+          BottomNavigationBarItem(icon: Icon(Icons.bookmark_outline), activeIcon: Icon(Icons.bookmark), label: 'Saved'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), activeIcon: Icon(Icons.assignment), label: 'Applied'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
-    );
-  }
-
-  Widget _buildCompanyStat(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: AppColors.textSecondary),
-        const SizedBox(width: 4),
-        Text(text, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildCultureImage() {
-    return Column(
-      children: [
-        Container(
-          height: 200,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            image: const DecorationImage(
-              image: NetworkImage('https://placeholder.com/culture1'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Container(
-            alignment: Alignment.bottomLeft,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Colors.black.withOpacity(0.7)]),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Text('Collaborative Hubs', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
-            Expanded(child: Container(height: 100, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.shade200))),
-            const SizedBox(width: 12),
-            Expanded(child: Container(height: 100, decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Colors.grey.shade200))),
+            _header(context),
+            const SizedBox(height: 12),
+            _hero(),
+            const SizedBox(height: 58),
+            const Center(child: Text('Spotify', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900))),
+            const SizedBox(height: 4),
+            const Center(child: Text('Music & Entertainment', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                _TinyMeta(icon: Icons.people_outline, text: '5,001 - 10,000 Employees'),
+                SizedBox(width: 12),
+                _TinyMeta(icon: Icons.location_on_outlined, text: 'Stockholm, SE'),
+              ],
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              height: 46,
+              child: ElevatedButton(
+                onPressed: () => setState(() => _isFollowing = !_isFollowing),
+                style: ElevatedButton.styleFrom(backgroundColor: _isFollowing ? AppColors.chipBackground : AppColors.primary, foregroundColor: _isFollowing ? AppColors.primary : Colors.white),
+                child: Text(_isFollowing ? 'Following' : 'Follow Company'),
+              ),
+            ),
+            const SizedBox(height: 26),
+            _aboutCard(),
+            const SizedBox(height: 24),
+            const Text('Culture & Life', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 12),
+            _cultureCard(height: 170, label: 'Collaborative Hubs', colors: const [Color(0xFF214E7B), Color(0xFFE18B48)]),
+            const SizedBox(height: 10),
+            _cultureCard(height: 92, label: '', colors: const [Color(0xFF0F172A), Color(0xFF6B8AA8)]),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                const Expanded(child: Text('Open Android\nRoles', style: TextStyle(fontSize: 17, height: 1.15, fontWeight: FontWeight.w900))),
+                _orangePill('3 ROLES'),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _roleCard('Senior Android Engineer,\nPlayer Experience', 'Remote', ['Kotlin', 'Compose', 'Dagger/Hilt']),
+            _roleCard('Android SDK Specialist', 'Stockholm - Hybrid', ['SDK Design', 'Java/Kotlin', 'Performance']),
+            const SizedBox(height: 18),
+            _quickInsights(),
+            const SizedBox(height: 16),
+            _techEcosystem(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _header(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
+        const Expanded(child: Text('Opportunity', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900))),
+        IconButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No new notifications.'))), icon: const Icon(Icons.notifications_none, size: 21)),
+        const CircleAvatar(radius: 15, backgroundColor: AppColors.textPrimary, child: Icon(Icons.person, color: Colors.white, size: 15)),
       ],
     );
   }
 
-  Widget _buildRoleItem(String title, String subtitle, List<String> tags) {
+  Widget _hero() {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          height: 170,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            gradient: const LinearGradient(colors: [Color(0xFFCFD8DC), Color(0xFF64748B)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          ),
+          child: const Center(child: Icon(Icons.apartment, color: Colors.white70, size: 64)),
+        ),
+        Positioned(
+          bottom: -38,
+          child: Container(
+            width: 76,
+            height: 76,
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 22)]),
+            child: const Icon(Icons.music_note, color: Color(0xFF1DB954), size: 36),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _aboutCard() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('About the Company', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+          child: const Text(
+            'Our mission is to unlock the potential of human creativity - by giving a million creative artists the opportunity to live off their art and billions of fans the opportunity to enjoy and be inspired by it.\n\nSpotify is a global music, podcast, and video service that gives you access to millions of songs and other content from creators all over the world.',
+            style: TextStyle(color: AppColors.textSecondary, height: 1.48, fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _cultureCard({required double height, required String label, required List<Color> colors}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      height: height,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), gradient: LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight)),
+      child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-              const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            children: tags.map((tag) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
-              child: Text(tag, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
-            )).toList(),
-          ),
+          const Positioned(right: 20, top: 20, child: Icon(Icons.groups_2_outlined, color: Colors.white30, size: 54)),
+          if (label.isNotEmpty)
+            Positioned(
+              left: 14,
+              bottom: 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(12)),
+                child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800)),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildInsightTile(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), shape: BoxShape.circle),
-            child: Icon(icon, size: 20, color: AppColors.primary),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            ],
-          ),
-        ],
+  Widget _roleCard(String title, String subtitle, List<String> tags) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$title selected'))),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  const SizedBox(height: 10),
+                  Wrap(spacing: 6, runSpacing: 6, children: tags.map(_chip).toList()),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.textSecondary),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _quickInsights() {
+    return _infoPanel(
+      title: 'QUICK INSIGHTS',
+      children: const [
+        _InsightRow(icon: Icons.groups_outlined, label: 'Company Size', value: '123K+ Staff'),
+        _InsightRow(icon: Icons.work_outline, label: 'Work Mode', value: 'Work From Anywhere'),
+        _InsightRow(icon: Icons.star_border, label: 'Glassdoor', value: '4.8 / 5.0'),
+      ],
+    );
+  }
+
+  Widget _techEcosystem() {
+    return _infoPanel(
+      title: 'TECHNICAL ECOSYSTEM',
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: ['Kotlin Multiplatform', 'Jetpack Compose', 'GraphQL', 'Coroutines', 'Bazel'].map(_chip).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _infoPanel({required String title, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10, fontWeight: FontWeight.w900)),
+        const SizedBox(height: 12),
+        ...children,
+      ]),
+    );
+  }
+
+  Widget _chip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(color: AppColors.chipBackground, borderRadius: BorderRadius.circular(10)),
+      child: Text(label, style: const TextStyle(fontSize: 9, color: AppColors.textSecondary, fontWeight: FontWeight.w800)),
+    );
+  }
+
+  Widget _orangePill(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(14)),
+      child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900)),
+    );
+  }
+}
+
+class _TinyMeta extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _TinyMeta({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Icon(icon, size: 13, color: AppColors.textSecondary),
+      const SizedBox(width: 4),
+      Text(text, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+    ]);
+  }
+}
+
+class _InsightRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _InsightRow({required this.icon, required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(children: [
+        CircleAvatar(radius: 16, backgroundColor: AppColors.lightBlue, child: Icon(icon, color: AppColors.primary, size: 16)),
+        const SizedBox(width: 10),
+        Expanded(child: Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w700))),
+        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+      ]),
     );
   }
 }

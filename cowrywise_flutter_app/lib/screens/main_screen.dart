@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import 'home_screen.dart';
-import 'job_listing_screen.dart';
 import 'saved_jobs_screen.dart';
 import 'profile_screen.dart';
 
@@ -17,8 +16,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const JobListingScreen(),
     const SavedJobsScreen(),
+    const _AppliedScreen(),
     const ProfileScreen(),
   ];
 
@@ -43,22 +42,71 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.explore_outlined),
             activeIcon: Icon(Icons.explore),
-            label: 'DISCOVER',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'SEARCH',
+            label: 'Discover',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bookmark_outline),
             activeIcon: Icon(Icons.bookmark),
-            label: 'SAVED',
+            label: 'Saved',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_outlined),
+            activeIcon: Icon(Icons.assignment),
+            label: 'Applied',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
-            label: 'PROFILE',
+            label: 'Profile',
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppliedScreen extends StatelessWidget {
+  const _AppliedScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            const Text('Applied Roles', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 8),
+            const Text('Your active applications will appear here.', style: TextStyle(color: AppColors.textSecondary)),
+            const SizedBox(height: 20),
+            _applicationCard('Senior Product Designer', 'Spotify', 'Reviewing'),
+            _applicationCard('Staff iOS Engineer', 'Airbnb', 'Interview'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _applicationCard(String title, String company, String status) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 18)]),
+      child: Row(
+        children: [
+          const CircleAvatar(backgroundColor: AppColors.lightBlue, child: Icon(Icons.assignment, color: AppColors.primary)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
+                Text(company, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              ],
+            ),
+          ),
+          Text(status, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w800, fontSize: 12)),
         ],
       ),
     );

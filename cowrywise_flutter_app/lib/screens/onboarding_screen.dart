@@ -4,130 +4,139 @@ import '../theme.dart';
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
+  void _continue(BuildContext context) {
+    Navigator.pushReplacementNamed(context, '/main');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('SkillBoard', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pushReplacementNamed(context, '/main'),
-            child: const Text('SKIP', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(40.0),
-        child: Column(
-          children: [
-            const Spacer(),
-            Container(
-              height: 250,
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Positioned(
-                    top: 40,
-                    right: 40,
-                    child: Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20)],
+                  const Text('Opportunity', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w900)),
+                  const Spacer(),
+                  TextButton(onPressed: () => _continue(context), child: const Text('Skip')),
+                ],
+              ),
+              const Spacer(),
+              SizedBox(
+                height: 230,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      top: 20,
+                      child: Transform.rotate(
+                        angle: -0.12,
+                        child: _mockCard(width: 150, height: 185, opacity: 0.72),
                       ),
-                      child: const Icon(Icons.android, size: 60, color: Color(0xFF3DDC84)),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 40,
-                    left: 40,
-                    child: Container(
-                      width: 120,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20)],
+                    Positioned(
+                      top: 44,
+                      child: Transform.rotate(
+                        angle: 0.14,
+                        child: _mockCard(width: 172, height: 142, opacity: 1),
                       ),
-                      child: Center(
-                        child: Container(
-                          width: 40,
-                          height: 8,
-                          decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(4)),
+                    ),
+                    Positioned(
+                      bottom: 28,
+                      left: 54,
+                      child: Container(
+                        width: 150,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 24, offset: const Offset(0, 10))],
+                        ),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(radius: 12, backgroundColor: AppColors.textPrimary),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(height: 9, width: 60, decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.2), borderRadius: BorderRadius.circular(8))),
+                                  const SizedBox(height: 7),
+                                  Container(height: 9, width: 86, decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.18), borderRadius: BorderRadius.circular(8))),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            const Text(
-              'Find your next\nAndroid challenge',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, height: 1.2),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Discover high-impact roles at top-tier companies tailored for your technical expertise.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14, height: 1.5),
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildDot(true),
-                _buildDot(false),
-                _buildDot(false),
-              ],
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/main'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 8),
-                    Icon(Icons.arrow_forward, size: 20),
                   ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 34),
+              const Text(
+                'Find your next\nAndroid challenge',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, height: 1.1),
+              ),
+              const SizedBox(height: 14),
+              const Text(
+                'Discover high-impact roles at top-tier companies tailored for your technical expertise.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.textSecondary, height: 1.45),
+              ),
+              const SizedBox(height: 34),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [_dot(false), _dot(true), _dot(false)]),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () => _continue(context),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text('Next'), SizedBox(width: 8), Icon(Icons.arrow_forward, size: 18)],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDot(bool isActive) {
+  Widget _mockCard({required double width, required double height, required double opacity}) {
+    return Opacity(
+      opacity: opacity,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 24, offset: const Offset(0, 12))],
+        ),
+        child: Center(
+          child: CircleAvatar(
+            radius: 22,
+            backgroundColor: AppColors.lightBlue,
+            child: Icon(Icons.work_outline, color: AppColors.primary.withOpacity(0.9)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _dot(bool active) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: isActive ? 24 : 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: isActive ? AppColors.primary : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(4),
-      ),
+      width: active ? 28 : 8,
+      height: 6,
+      decoration: BoxDecoration(color: active ? AppColors.primary : AppColors.border, borderRadius: BorderRadius.circular(8)),
     );
   }
 }

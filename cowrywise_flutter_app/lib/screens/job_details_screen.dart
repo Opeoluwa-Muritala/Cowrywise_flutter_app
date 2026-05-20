@@ -48,15 +48,16 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('SkillBoard', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text('Opportunity', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(icon: const Icon(Icons.share_outlined, color: Colors.black), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.share_outlined, color: Colors.black),
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Job link copied.'))),
+          ),
           IconButton(
             icon: Icon(
               _currentJob.isSaved ? Icons.bookmark : Icons.bookmark_border,
