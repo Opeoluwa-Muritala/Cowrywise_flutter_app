@@ -1,86 +1,92 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/job.dart';
 
 class JobService {
-  static const String _mockUrl = 'https://901522ec-fa4d-4b63-aecc-a237dc24ac90.mock.pstmn.io/jobs';
-  
-  static final List<Job> _localJobs = [];
+  static final List<Job> _localJobs = [
+    Job(
+      id: 'spotify_product_designer',
+      title: 'Senior Product Designer',
+      company: 'Spotify',
+      location: 'San Francisco, CA',
+      salary: r'$120K - $150K',
+      type: 'Full-time',
+      timeAgo: '3h ago',
+      logo: 'S',
+      tags: const ['UI/UX', 'Figma', 'SaaS'],
+      description:
+          'Design elegant mobile experiences for creators and listeners across a global audio platform.',
+      requirements: const [
+        'Strong product design portfolio with mobile case studies.',
+        'Experience using Figma and design systems at scale.',
+        'Ability to partner closely with product and engineering teams.',
+      ],
+      experience: '5+ Years',
+      isSaved: true,
+    ),
+    Job(
+      id: 'airbnb_ios_engineer',
+      title: 'Staff iOS Engineer',
+      company: 'Airbnb',
+      location: 'Remote',
+      salary: r'$150K - $190K',
+      type: 'Full-time',
+      timeAgo: '8h ago',
+      logo: 'A',
+      tags: const ['Swift', 'UIKit', 'iOS'],
+      isRemote: true,
+      description:
+          'Lead high-impact iOS architecture for marketplace experiences used by hosts and guests.',
+      requirements: const [
+        'Deep Swift and UIKit experience.',
+        'Experience mentoring senior mobile engineers.',
+      ],
+      experience: '7+ Years',
+    ),
+    Job(
+      id: 'stripe_product_marketing',
+      title: 'Product Marketing Manager',
+      company: 'Stripe',
+      location: 'New York, NY',
+      salary: r'$130K - $160K',
+      type: 'Full-time',
+      timeAgo: '1d ago',
+      logo: 'St',
+      tags: const ['Growth', 'SaaS', 'Product'],
+      description:
+          'Own product narratives and launch plans for developer-focused financial tools.',
+      requirements: const [
+        'Experience launching SaaS products.',
+        'Strong positioning and customer research skills.',
+      ],
+      experience: '4+ Years',
+    ),
+    Job(
+      id: 'airbnb_product_designer',
+      title: 'Product Designer',
+      company: 'Airbnb',
+      location: 'Remote',
+      salary: r'$150K - $190K',
+      type: 'Contract',
+      timeAgo: '2h ago',
+      logo: 'A',
+      tags: const ['Figma', 'UX', 'Research'],
+      isRemote: true,
+      isSaved: true,
+    ),
+  ];
 
   static Future<List<Job>> getJobs({String? query, String? location}) async {
-    try {
-      final response = await http.get(Uri.parse(_mockUrl));
-
-      if (response.statusCode == 200) {
-        // Sanitize the JSON string to remove control characters like newlines within strings
-        final sanitizedBody = response.body.replaceAll(RegExp(r'[\x00-\x1F]'), ' ');
-        final List<dynamic> rawData = jsonDecode(sanitizedBody);
-        final List<Job> fetchedJobs = [];
-        
-        String currentCompany = '';
-        String currentCompanyId = '';
-        String currentLogo = '';
-
-        for (var i = 0; i < rawData.length; i++) {
-          final item = rawData[i];
-          
-          if (item is String) continue;
-
-          if (item is Map<String, dynamic>) {
-            if (item.containsKey('company')) {
-              currentCompany = item['company'] ?? '';
-              currentCompanyId = item['id']?.toString() ?? '';
-              currentLogo = currentCompany.isNotEmpty ? currentCompany[0] : '';
-            } else if (item.containsKey('Title')) {
-              final String title = item['Title'] ?? '';
-              final String loc = item['Location'] ?? '';
-              
-              fetchedJobs.add(Job(
-                id: '${currentCompanyId}_$i',
-                title: title,
-                company: currentCompany,
-                location: loc,
-                salary: 'Confidential',
-                type: 'Full-time',
-                timeAgo: 'Recently',
-                logo: currentLogo,
-                tags: [
-                  if (loc.toLowerCase().contains('remote')) 'REMOTE',
-                  'DESIGN',
-                ],
-                isRemote: loc.toLowerCase().contains('remote'),
-                description: item['Description'] ?? 'No description available.',
-                requirements: [],
-                experience: 'N/A',
-              ));
-            }
-          }
-        }
-        
-        for (var job in fetchedJobs) {
-          final existing = _localJobs.firstWhere((j) => j.id == job.id, orElse: () => job);
-          job.isSaved = existing.isSaved;
-        }
-
-        List<Job> filteredJobs = fetchedJobs;
-        if (query != null && query.isNotEmpty) {
-          filteredJobs = fetchedJobs.where((job) => 
-            job.title.toLowerCase().contains(query.toLowerCase()) || 
-            job.company.toLowerCase().contains(query.toLowerCase())
-          ).toList();
-        }
-        
-        _localJobs.clear();
-        _localJobs.addAll(fetchedJobs);
-        
-        return filteredJobs;
-      } else {
-        throw Exception('Failed to load jobs');
-      }
-    } catch (e) {
-      print('Error fetching jobs: $e');
-      return _localJobs;
+    await Future.delayed(const Duration(milliseconds: 250));
+    var jobs = List<Job>.from(_localJobs);
+    if (query != null && query.trim().isNotEmpty) {
+      final term = query.toLowerCase();
+      jobs = jobs
+          .where((job) =>
+              job.title.toLowerCase().contains(term) ||
+              job.company.toLowerCase().contains(term) ||
+              job.tags.any((tag) => tag.toLowerCase().contains(term)))
+          .toList();
     }
+    return jobs;
   }
 
   static Future<Job> getJobDetails(String id) async {

@@ -7,19 +7,17 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: const SizedBox.shrink(), // Removed leading profile icon
         title: const Text(
-          'Marcus Chen',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          'Opportunity',
+          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined, color: Colors.black),
-            onPressed: () {},
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Preferences opened.'))),
           ),
         ],
       ),
@@ -41,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Marcus Chen',
+                    'Alex Morgan',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const Text(
@@ -133,7 +131,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildMenuItem(IconData icon, String title, {Color? color}) {
     return InkWell(
-      onTap: () {},
+      onTap: () => debugPrint('$title tapped'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
