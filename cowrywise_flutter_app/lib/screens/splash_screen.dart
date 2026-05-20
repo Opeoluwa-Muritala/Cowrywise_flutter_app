@@ -14,7 +14,7 @@ class SplashScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF007BFF), Color(0xFF0052FF)],
+            colors: [Color(0xFF1F83FF), AppColors.primary],
           ),
         ),
         child: Column(
@@ -35,7 +35,7 @@ class SplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'SkillBoard',
+              'Opportunity',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,
